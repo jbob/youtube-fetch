@@ -40,6 +40,13 @@ class Downloaded:
     db.close()
 
 def main():
+  init = False
+  if len(sys.argv) > 2 and sys.argv[2] == 'init':
+    # Initialize. Don't download anything, just mark every video 
+    # in the feed as seen.
+    init = True
+
+
   downloaded = Downloaded()
   # First delte old files
   files = os.listdir(DOWNLOADDIR)
@@ -53,14 +60,17 @@ def main():
   for entry in feed.entries:
     link = entry.link
     if not downloaded.get(link):
-      print "Downloading:", link
-      result = subprocess.call(['youtube-dl', '-c', '-o', DOWNLOADDIR+'%(upload_date)s_%(stitle)s_%(uploader)s.avi', link])
-      if result == 0:
-        print "Download successfull"
-        downloaded.add(link)
+      if init == False:
+        print "Downloading:", link
+        result = subprocess.call(['youtube-dl', '-c', '-o', DOWNLOADDIR+'%(upload_date)s_%(stitle)s_%(uploader)s.avi', link])
+        if result == 0:
+          print "Download successfull"
+          downloaded.add(link)
+        else:
+          print "Fehler"
+          exit(1)
       else:
-        print "Fehler"
-        exit(1)
+        downloaded.add(link)
     else:
       print "Skipping:", link
 
