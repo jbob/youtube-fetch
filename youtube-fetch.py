@@ -58,13 +58,15 @@ def main():
   # Get current feed and download new videos
   feed = feedparser.parse(URL)
   print "Feed URL:", URL
-  for entry in reversed(feed.entries):
+  for entry in feed.entries:
     link = entry.link
+    published = entry.published[:16].replace(':', '').replace('-', '').replace('T', '')
     if not downloaded.get(link):
       if init == False:
         print "Downloading:", link
-        now = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-        result = subprocess.call(['youtube-dl', '-c', '-o', DOWNLOADDIR+now+'_%(stitle)s_%(uploader)s.avi', link])
+        output = DOWNLOADDIR+published+'_%(stitle)s_%(uploader)s.avi'
+        cmd = ['youtube-dl', '--no-progress', '-c', '-o', output, link]
+        result = subprocess.call(cmd)
         if result == 0:
           print "Download successfull"
           downloaded.add(link)
