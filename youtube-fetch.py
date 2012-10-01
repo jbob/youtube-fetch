@@ -48,7 +48,7 @@ def main():
 
 
   downloaded = Downloaded()
-  # First delte old files
+  # First delete old files
   files = os.listdir(DOWNLOADDIR)
   for f in files:
     modified = datetime.datetime.fromtimestamp(os.path.getmtime(DOWNLOADDIR+f))
@@ -63,10 +63,11 @@ def main():
     published = entry.published[:16].replace(':', '').replace('-', '').replace('T', '')
     if not downloaded.get(link):
       if init == False:
-        print "Downloading:", link
+        print "Downloading:", entry.title
         output = DOWNLOADDIR+published+'_%(stitle)s_%(uploader)s.avi'
         cmd = ['youtube-dl', '--no-progress', '-c', '-o', output, link]
-        result = subprocess.call(cmd)
+        result = subprocess.call(cmd, stdout=open(os.devnull, 'w'))
+        #result = subprocess.call(cmd)
         if result == 0:
           print "Download successfull"
           downloaded.add(link)
@@ -75,9 +76,6 @@ def main():
           exit(1)
       else:
         downloaded.add(link)
-    else:
-      print "Skipping:", link
-
 
 if __name__ == '__main__':
   main()
