@@ -53,7 +53,10 @@ def main():
   for f in files:
     modified = datetime.datetime.fromtimestamp(os.path.getmtime(DOWNLOADDIR+f))
     if (datetime.datetime.now() - modified) > datetime.timedelta(days=14):
-      os.remove(DOWNLOADDIR+f)
+      try:
+        os.remove(DOWNLOADDIR+f)
+      except OSError:
+        pass
 
   # Get current feed and download new videos
   feed = feedparser.parse(URL)
