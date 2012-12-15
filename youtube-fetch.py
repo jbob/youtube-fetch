@@ -67,12 +67,14 @@ def main():
     if not downloaded.get(link):
       if init == False:
         print "Downloading:", entry.title
+        sys.stdout.flush()
         output = DOWNLOADDIR+published+'_%(stitle)s_%(uploader)s.avi'
         cmd = ['youtube-dl', '--no-progress', '-c', '-o', output, link]
         result = subprocess.call(cmd, stdout=open(os.devnull, 'w'))
         #result = subprocess.call(cmd)
         if result == 0:
           print "Download successfull"
+          sys.stdout.flush()
           downloaded.add(link)
         else:
           print "Fehler"
