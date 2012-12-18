@@ -39,6 +39,10 @@ class Downloaded:
     db.write('\n'.join(self.downloaded))
     db.close()
 
+def myprint(out):
+  print(out.encode('utf-8'))
+  sys.stdout.flush()
+
 def main():
   init = False
   if len(sys.argv) > 2 and sys.argv[2] == 'init':
@@ -60,24 +64,22 @@ def main():
 
   # Get current feed and download new videos
   feed = feedparser.parse(URL)
-  print "Feed URL:", URL
+  myprint('Feed URL: %s' % URL)
   for entry in feed.entries:
     link = entry.link
     published = entry.published[:16].replace(':', '').replace('-', '').replace('T', '')
     if not downloaded.get(link):
       if init == False:
-        print "Downloading:", entry.title
-        sys.stdout.flush()
+        myprint('Downloading: %s' % entry.title)
         output = DOWNLOADDIR+published+'_%(stitle)s_%(uploader)s.avi'
         cmd = ['youtube-dl', '--no-progress', '-c', '-o', output, link]
         result = subprocess.call(cmd, stdout=open(os.devnull, 'w'))
         #result = subprocess.call(cmd)
         if result == 0:
-          print "Download successfull"
-          sys.stdout.flush()
+          myprint('Download successfull')
           downloaded.add(link)
         else:
-          print "Fehler"
+          myprint('Fehler')
           exit(1)
       else:
         downloaded.add(link)
