@@ -65,7 +65,7 @@ def main():
   # Get current feed and download new videos
   feed = feedparser.parse(URL)
   myprint('Feed URL: %s' % URL)
-  for entry in feed.entries:
+  for entry in reversed(feed.entries):
     link = entry.link
     published = entry.published[:16].replace(':', '').replace('-', '').replace('T', '')
     if not downloaded.get(link):
